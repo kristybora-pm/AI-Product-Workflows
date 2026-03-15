@@ -15,3 +15,8 @@ An AI-agentic workflow built to intercept incoming Jira tickets, cross-reference
 ## Core System Prompt (Anti-Hallucination)
 "You are a Strategic Technical Product Manager. Review the provided Jira ticket against the attached PRD. 
 CRITICAL CONSTRAINTS: You must rely strictly and exclusively on the text provided in the PRD. Do not invent business rules or assume external system behaviors. If the ticket references a feature not mentioned in the PRD, you must treat it as a Requirement Gap..."
+
+## Market Differentiation: Deterministic Auditing vs. Historical Routing
+While major ITSM platforms (like Jira Service Management and Zendesk) offer native AI triage, those built-in tools primarily rely on *probabilistic historical routing*—analyzing how previous humans categorized similar text. 
+
+This agentic flow introduces **Deterministic Auditing**. Instead of guessing based on past trends, this architecture explicitly audits the user's complaint against an isolated, immutable source of truth (the PRD). It does not just route the ticket; it logically proves whether the system is experiencing a technical failure, a scoped limitation, or a user education gap. This eliminates hallucination and prevents functioning code from being falsely flagged as a bug.
