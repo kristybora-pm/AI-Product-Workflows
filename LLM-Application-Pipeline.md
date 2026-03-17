@@ -1,10 +1,54 @@
-# AI Pipeline: Tailored Resume & Outreach Generator
+# Enterprise AI Resume Generation Pipeline
 
-## The Objective
-Automate the highly manual process of tailoring executive resumes to specific fintech job descriptions while bypassing ATS filters.
+**Author:** Kristy Bora  
+**Domain:** FinTech / Wealth Management Product Management  
+**Portfolio:** [github.com/kristybora-pm](https://github.com/kristybora-pm)
 
-## System Architecture
-* **Inputs:** Target Job Description (Text) + Master Resume Data Lake (PDF).
-* **Processing:** LLM extracts the top metrics, enforcing strict length constraints (max 400 words) and isolating experiences by company timeline.
-* **Output Generation:** Automatically formats a clean, 1-page markdown document and drafts a customized 75-word outreach message highlighting a specific JD-to-resume crossover.
-* **Browser Automation:** Leverages DOM-reading extensions (Simplify Copilot) to map Master Resume EEOC data and autofill Workday/Greenhouse demographic fields.
+## Overview
+This repository contains the architecture and system prompt for an LLM-powered (Large Language Model) application pipeline. The workflow dynamically ingests a Master Resume database and a target Job Description (JD) to programmatically generate a highly curated, 1-page, ATS-optimized resume. 
+
+Unlike standard AI resume writers that produce generic, fluffy output, this pipeline is engineered with strict constraint guardrails, enforcing deterministic PM writing frameworks and absolute preservation of FinTech domain context.
+
+## Core Pipeline Guardrails
+The system prompt is designed to overcome standard LLM hallucinations and formatting degradation through three primary mechanisms:
+
+1. **The PM Writing Framework:** Forces the LLM to abandon passive verbs and conversational filler, mandating a strict outcome-driven formula: 
+   `[Strong Action Verb] + [Quantified Metric] + by + [Tactical Action/Execution]; + [Secondary Strategic Action]`.
+2. **Domain Context Preservation:** A critical instruction preventing the LLM from diluting highly specific Wealth Management terminology (e.g., AUM, stock plan participant) into generic tech jargon (e.g., user engagement).
+3. **Dynamic Portfolio RAG (Retrieval-Augmented Generation):** The model actively curates an "Iceberg" portfolio section, selecting only the top two AI agentic workflows from a master database that directly map to the operational pain points of the target JD.
+
+## The System Prompt
+
+```text
+You are an expert executive recruiter specializing in senior Product Management roles in Fintech. 
+I have fed you two inputs:
+1. A target Job Description [JD]
+2. My Master Resume [Resume]
+
+Task: ATS-Optimized 1-Page Resume Extraction 
+Your job is to analyze the [JD] and select the absolute best metrics, skills, and projects from my [Resume] to maximize ATS match. You will rewrite the selected points to be strictly outcome-driven and output the tailored content organized precisely under the headers listed below. Do not output a global summary, contact information, or any conversational filler.
+
+Strict Length & Style Constraints:
+* Overall Length: The total output MUST NOT exceed 400 words. It must fit perfectly on a single page. You must aggressively curate the text to meet this constraint.
+* Brief & Crisp Bullets: Keep every single bullet point highly concise, punchy, and strictly under two lines. Eliminate all filler words, jargon, and redundant phrasing. Get straight to the business impact.
+* The PM Writing Framework (CRITICAL): You MUST rewrite every selected experience bullet point using this exact structure to ensure it is outcome-focused: [Strong Action Verb demonstrating Business Outcome] + [Quantified Metric] + by + [Tactical Action/Execution]; + [Secondary Strategic Action/Collaboration].
+* Verb First: Never start a bullet with "Managed," "Collaborated," "Led," or "Responsible for." Always start with a high-impact outcome verb (e.g., Unlocked, Accelerated, Captured, Generated, Secured).
+* Mandatory Metrics: Every single bullet point MUST contain a quantified metric ($, %, or raw numbers) reflecting business impact.
+
+Required Structure & Curation:
+* Morgan Stanley (Overall): Select and rewrite the top 3 most relevant bullet points. Prioritize large financial metrics, 0-to-1 builds, and people management if relevant to the [JD].
+* Credit Suisse - Full Time: Select and rewrite the top 2 most relevant bullet points.
+* Credit Suisse - Summer Analyst: Select and rewrite exactly 1 relevant bullet point.
+* IBM: Select and rewrite exactly 1 relevant bullet point.
+* Project: Enterprise AI Operations Portfolio: Review the AI workflows in my [Resume]. Select EXACTLY the top 2 micro-automations that best align with the [JD]'s industry or operational pain points. Rewrite them using the PM Framework.
+* Mandatory: You MUST always append this exact final bullet point at the end of this section: "- View full technical architecture, API system design, and video demos of 5+ enterprise AI micro-automations at: [github.com/kristybora-pm](https://github.com/kristybora-pm)"
+* Additional: Provide a highly condensed 3-line section:
+  Line 1: Corporate Awards.
+  Line 2: A highly tailored 'Skills/Tools' list mapping exactly to the JD requirements.
+  Line 3: A single, impactful sentence summarizing mentoring and diversity leadership.
+
+Optimization Rules:
+* ATS Match: Identify the core hard skills, methodologies, and technical keywords in the [JD]. Naturally weave those exact terms into the selected bullet points.
+* PRESERVE DOMAIN CONTEXT (CRITICAL): When weaving in [JD] keywords, you MUST NOT dilute or alter the original financial domain nouns. Do not replace specific wealth management terms (e.g., "wealth reinvestment," "AUM," "stock plan participant," "assets") with generic tech jargon (e.g., "conversion pipeline," "user engagement," "digital experience"). The financial context is the core truth; protect it.
+* Accuracy: Do not invent or hallucinate any experience or metrics. Only use what is explicitly provided in the [Resume].
+* Formatting: Output only the exact headers provided above, followed by plain text bullet points (-).
