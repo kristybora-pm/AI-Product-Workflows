@@ -5,17 +5,18 @@
 **Portfolio:** [github.com/kristybora-pm](https://github.com/kristybora-pm)
 
 ## Overview
-This repository contains the architecture and system prompt for an LLM-powered (Large Language Model) application pipeline. The workflow dynamically ingests a Master Resume database and a target Job Description (JD) to programmatically generate a highly curated, 1-page, ATS-optimized resume. 
+This repository contains the architecture and system prompt for an LLM-powered application pipeline. The workflow dynamically ingests a Master Resume database and a target Job Description (JD) to programmatically generate a highly curated, 1-page, ATS-optimized resume. 
 
-Unlike standard AI resume writers that produce generic, fluffy output, this pipeline is engineered with strict constraint guardrails, enforcing deterministic PM writing frameworks and absolute preservation of FinTech domain context.
+Unlike standard AI resume writers that produce generic, fluffy output, this pipeline is engineered with strict constraint guardrails, enforcing deterministic PM writing frameworks, absolute preservation of FinTech domain context, and a native Quality Assurance (QA) scoring loop.
 
 ## Core Pipeline Guardrails
-The system prompt is designed to overcome standard LLM hallucinations and formatting degradation through three primary mechanisms:
+The system prompt is designed to overcome standard LLM hallucinations and formatting degradation through four primary mechanisms:
 
 1. **The PM Writing Framework:** Forces the LLM to abandon passive verbs and conversational filler, mandating a strict outcome-driven formula: 
    `[Strong Action Verb] + [Quantified Metric] + by + [Tactical Action/Execution]; + [Secondary Strategic Action]`.
 2. **Domain Context Preservation:** A critical instruction preventing the LLM from diluting highly specific Wealth Management terminology (e.g., AUM, stock plan participant) into generic tech jargon (e.g., user engagement).
 3. **Dynamic Portfolio RAG (Retrieval-Augmented Generation):** The model actively curates an "Iceberg" portfolio section, selecting only the top two AI agentic workflows from a master database that directly map to the operational pain points of the target JD.
+4. **Automated ATS Scoring & Feedback Loop:** The pipeline runs an evaluative QA pass immediately after generation. It compares the final output against the target JD, calculates an estimated keyword match score, and outputs a brief feedback report flagging missing domain nouns or critical skills for manual intervention.
 
 ## The System Prompt
 
@@ -41,11 +42,17 @@ Required Structure & Curation:
 * Credit Suisse - Summer Analyst: Select and rewrite exactly 1 relevant bullet point.
 * IBM: Select and rewrite exactly 1 relevant bullet point.
 * Project: Enterprise AI Operations Portfolio: Review the AI workflows in my [Resume]. Select EXACTLY the top 2 micro-automations that best align with the [JD]'s industry or operational pain points. Rewrite them using the PM Framework.
-* Mandatory: You MUST always append this exact final bullet point at the end of this section: "- View full technical architecture, API system design, and video demos of 5+ enterprise AI micro-automations at: [github.com/kristybora-pm](https://github.com/kristybora-pm)"
+* Mandatory Link: You MUST always append this exact final bullet point at the end of this section: "- View full technical architecture, API system design, and video demos of 5+ enterprise AI micro-automations at: [github.com/kristybora-pm](https://github.com/kristybora-pm)"
 * Additional: Provide a highly condensed 3-line section:
   Line 1: Corporate Awards.
   Line 2: A highly tailored 'Skills/Tools' list mapping exactly to the JD requirements.
   Line 3: A single, impactful sentence summarizing mentoring and diversity leadership.
+
+Evaluation & QA Pass (The Feedback Loop):
+After generating the resume sections above, you MUST provide a strictly formatted, 3-line 'ATS QA Report' at the very bottom of the output:
+* Line 1 (ATS Score): Provide an estimated percentage match based on hard skills and domain keywords present in the [JD].
+* Line 2 (Missing Keywords): List 1-3 critical hard skills or domain nouns from the [JD] that could not be organically mapped from the [Resume].
+* Line 3 (Strategic Recommendation): Provide one single sentence advising if manual intervention is required before submission.
 
 Optimization Rules:
 * ATS Match: Identify the core hard skills, methodologies, and technical keywords in the [JD]. Naturally weave those exact terms into the selected bullet points.
