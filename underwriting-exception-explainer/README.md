@@ -50,11 +50,12 @@ A 3-node agentic pipeline built to close the interpretation gap between a lender
 
 **Input — raw lender decline notes**
 
-![Input screenshot](screenshots/input.png)
+[![Input screenshot](screenshots/input.png)](https://github.com/kristybora-pm/AI-Product-Workflows/blob/main/underwriting-exception-explainer/screenshots/StubData-DeclinedScotiabank.png)
 
 **Output — structured exception analysis**
+https://github.com/kristybora-pm/AI-Product-Workflows/blob/main/underwriting-exception-explainer/screenshots/Output-NBA-Broker-part1.png
 
-![Output screenshot](screenshots/output.png)
+https://github.com/kristybora-pm/AI-Product-Workflows/blob/main/underwriting-exception-explainer/screenshots/Output-NBA-Broker-part2.png
 
 ---
 
