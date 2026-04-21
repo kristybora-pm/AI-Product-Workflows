@@ -1,0 +1,11 @@
+id,name,company,email,admin_email,ssn,country,address,addr_year,legal_name
+P001,Sarah Chen,Nexvera Corp,s.chen@nexvera.com,admin@nexvera.com,,US,"142 Oak Ave, Austin TX 78701",2019,Sarah L Chen
+P002,Marcus Webb,Orbion Technologies,m.webb@orbion.io,admin@orbion.io,532-88-1204,,"88 Franklin St, Boston MA 02110",2021,Marcus Webb
+P003,Priya Nair,Lumitex Inc,p.nair@lumitex.com,plans@lumitex.com,,,9 Birch Ln Chicago IL 60601,2018,Priya Nair
+P004,James Okafor,Syncwave,j.okafor@syncwave.com,equity@syncwave.com,701-44-9923,NG,"15 Elm Rd, New York NY 10001",2017,James A. Okafor-Bello
+P005,Elena Vasquez,Driftline Systems,e.vasquez@driftline.com,hr@driftline.com,889-02-4417,US,"3301 Pine Blvd, Seattle WA 98101",2022,Elena Vasquez
+P006,Tom Ridgeway,Nexvera Corp,t.ridgeway@nexvera.com,admin@nexvera.com,,GB,"22 Victoria St, Austin TX 78702",2016,Thomas Ridgeway
+P007,Ayesha Malik,Orbion Technologies,a.malik@orbion.io,admin@orbion.io,244-71-8830,,"Floor 2, 100 King St, Toronto",2020,Ayesha Malik
+P008,Devon Brooks,Helixon Ltd,d.brooks@helixon.com,stockplans@helixon.com,910-55-2201,US,"501 Maple Dr, Denver CO 80201",2015,Devon Brooks Jr.
+P009,Mei Tanaka,Lumitex Inc,mei.tanaka@lumitex.com,plans@lumitex.com,,JP,"7-2 Shibuya, Tokyo",2023,Mei Tanaka
+P010,Chris Oduya,Syncwave,c.oduya@syncwave.com,equity@syncwave.com,603-29-7741,US,"88 Lakeview Terrace, Miami FL 33101",2021,Christopher Oduya
