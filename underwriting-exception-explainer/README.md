@@ -115,7 +115,7 @@ That distinction is increasingly what PM work looks like.
 
 ## Author
 
-Built by [Your Name](https://www.linkedin.com/in/yourprofile)
+Built by Kristy Bora
 
 ---
 
