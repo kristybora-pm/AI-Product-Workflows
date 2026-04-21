@@ -133,7 +133,7 @@ See `sample_participants.csv` for a working example with synthetic data.
 
 Built by a fintech product professional with 10 years of experience across equity compensation, wealth management, and data platform engineering.
 
-[LinkedIn](https://linkedin.com/in/yourprofile) · [GitHub](https://github.com/yourusername)
+[LinkedIn](https://www.linkedin.com/in/kristy-bora-52576280/)) 
 
 ---
 
