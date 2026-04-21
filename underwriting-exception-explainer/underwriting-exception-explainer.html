@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Underwriting Exception Explainer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f4;
+      --bg-danger: #fef2f2;
+      --bg-success: #f0fdf4;
+      --bg-info: #eff6ff;
+      --text: #1c1917;
+      --text-secondary: #78716c;
+      --text-tertiary: #a8a29e;
+      --text-danger: #dc2626;
+      --text-success: #16a34a;
+      --text-info: #2563eb;
+      --border: #e7e5e4;
+      --border-strong: #d6d3d1;
+      --border-danger: #fca5a5;
+      --border-success: #86efac;
+      --border-info: #93c5fd;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "SF Mono", "Fira Code", monospace;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-secondary);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      background: var(--bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 2rem;
+    }
+
+    .label {
+      font-size: 11px;
+      letter-spacing: .07em;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .title { font-size: 22px; font-weight: 600; color: var(--text); }
+    .subtitle { font-size: 14px; color: var(--text-secondary); margin-top: 4px; margin-bottom: 1.5rem; }
+
+    .pipeline {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 1.5rem;
+    }
+
+    .node {
+      font-size: 11px;
+      color: var(--text-secondary);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+    }
+
+    .node.done {
+      color: var(--text-success);
+      border-color: var(--border-success);
+      background: var(--bg-success);
+    }
+
+    .arr { font-size: 11px; color: var(--text-tertiary); }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+    label { font-size: 11px; letter-spacing: .07em; color: var(--text-tertiary); text-transform: uppercase; }
+
+    select, input[type="text"], textarea {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg);
+      color: var(--text);
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    select:focus, input[type="text"]:focus, textarea:focus {
+      border-color: var(--border-strong);
+    }
+
+    textarea {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      resize: vertical;
+      min-height: 120px;
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-primary {
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 8px 18px;
+      border-radius: var(--radius-md);
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      transition: opacity 0.15s;
+    }
+
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-ghost {
+      font-size: 13px;
+      cursor: pointer;
+      padding: 7px 14px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      color: var(--text-secondary);
+      margin-left: 8px;
+      transition: background 0.15s;
+    }
+
+    .btn-ghost:hover { background: var(--bg-secondary); }
+
+    .ts { font-size: 11px; color: var(--text-tertiary); font-family: var(--font-mono); }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 1.5rem 0;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+      animation: blink 1.2s ease-in-out infinite;
+    }
+
+    .dot:nth-child(2) { animation-delay: .2s; }
+    .dot:nth-child(3) { animation-delay: .4s; }
+
+    @keyframes blink { 0%,100%{opacity:.3} 50%{opacity:1} }
+
+    .error {
+      font-size: 13px;
+      color: var(--text-danger);
+      background: var(--bg-danger);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      margin-top: 12px;
+    }
+
+    .output { display: flex; flex-direction: column; gap: 1rem; }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 8px;
+    }
+
+    .card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      margin-bottom: 10px;
+    }
+
+    .card.dl { border-left: 3px solid var(--border-danger); border-top-left-radius: 0; border-bottom-left-radius: 0; }
+    .card.ok { border-left: 3px solid var(--border-success); border-top-left-radius: 0; border-bottom-left-radius: 0; }
+    .card.inf { border-left: 3px solid var(--border-info); border-top-left-radius: 0; border-bottom-left-radius: 0; }
+
+    .finding-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+    .finding-code { font-size: 13px; font-weight: 600; color: var(--text); font-family: var(--font-mono); }
+
+    .badge { font-size: 11px; padding: 2px 8px; border-radius: var(--radius-sm); }
+    .badge.hard_stop { background: var(--bg-danger); color: var(--text-danger); }
+    .badge.fixable { background: var(--bg-success); color: var(--text-success); }
+    .badge.monitor { background: var(--bg-info); color: var(--text-info); }
+
+    .finding-rule { font-size: 11px; color: var(--text-secondary); margin-bottom: 6px; font-family: var(--font-mono); }
+    .finding-plain { font-size: 13px; color: var(--text); line-height: 1.65; margin-bottom: 6px; }
+    .finding-tip { font-size: 12px; color: var(--text-success); border-top: 1px solid var(--border); padding-top: 7px; line-height: 1.55; }
+
+    .action-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; }
+
+    .likelihood-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .likelihood-lbl { font-size: 13px; color: var(--text-secondary); }
+
+    .pill { font-size: 11px; padding: 3px 10px; border-radius: var(--radius-sm); }
+    .pill.high { background: var(--bg-success); color: var(--text-success); }
+    .pill.medium { background: var(--bg-info); color: var(--text-info); }
+    .pill.low { background: var(--bg-danger); color: var(--text-danger); }
+
+    .arow { display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; align-items: baseline; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .arow:last-of-type { border-bottom: none; }
+    .anum { font-size: 11px; color: var(--text-tertiary); font-family: var(--font-mono); }
+    .atext { font-size: 13px; color: var(--text); line-height: 1.5; }
+    .aowner { font-size: 11px; color: var(--text-tertiary); }
+    .atime { font-size: 11px; color: var(--text-secondary); white-space: nowrap; }
+
+    .alt { margin-top: 10px; font-size: 12px; color: var(--text-secondary); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 10px; }
+
+    .kgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .kpi { background: var(--bg-secondary); border-radius: var(--radius-md); padding: .75rem 1rem; }
+    .kval { font-size: 22px; font-weight: 600; color: var(--text); }
+    .klbl { font-size: 11px; color: var(--text-tertiary); margin-top: 3px; }
+
+    .meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px; }
+    .meta-title { font-size: 15px; font-weight: 600; color: var(--text); }
+    .meta-info { font-size: 11px; color: var(--text-tertiary); font-family: var(--font-mono); margin-top: 2px; }
+
+    .summary-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--border-info);
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      font-size: 13px;
+      line-height: 1.75;
+      color: var(--text);
+    }
+
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="label">Origination intelligence</div>
+    <div class="title">Underwriting Exception Explainer</div>
+    <div class="subtitle">3-node agentic pipeline: parse exception codes, cross-reference B-20, generate broker action plan.</div>
+
+    <div class="pipeline">
+      <div class="node" id="n1">Node 1 — parse exception</div>
+      <div class="arr">→</div>
+      <div class="node" id="n2">Node 2 — cross-ref B-20</div>
+      <div class="arr">→</div>
+      <div class="node" id="n3">Node 3 — action plan</div>
+      <div class="arr">→</div>
+      <div class="node" id="n4">Output</div>
+    </div>
+
+    <div class="form-group" style="background:#f5f5f4;padding:10px 12px;border-radius:8px;border:1px solid #e7e5e4;margin-bottom:12px">
+      <label for="apiKey">Anthropic API key</label>
+      <input type="password" id="apiKey" placeholder="sk-ant-api03-... (get yours at console.anthropic.com)" />
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="decisionType">Decision type</label>
+        <select id="decisionType">
+          <option value="declined">Declined</option>
+          <option value="conditional">Conditionally approved</option>
+          <option value="suspended">Suspended</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="lenderName">Lender</label>
+        <input type="text" id="lenderName" placeholder="e.g. TD Bank, First National..." />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="reasonInput">Reason codes / notes from lender</label>
+      <textarea id="reasonInput" placeholder="Paste the lender decline reason codes or underwriting notes here...
+
+Example:
+— GDS ratio 36.8% exceeds 32% guideline (B-20 s.4.1)
+— Borrower 2 self-employed less than 24 months
+— Stress test qualification rate: 7.22%; borrower qualifies at 5.89% only"></textarea>
+    </div>
+
+    <div class="actions">
+      <div>
+        <button class="btn-primary" id="runBtn" onclick="runAnalysis()">Analyze exception</button>
+        <button class="btn-ghost" onclick="loadDemo()">Load demo case</button>
+      </div>
+      <div class="ts" id="ts"></div>
+    </div>
+
+    <div id="out"></div>
+  </div>
+
+  <script>
+    const DEMO = {
+      decision: "declined",
+      lender: "Scotia Mortgage Authority",
+      reasons: `— TDS ratio 44.2% exceeds 44% guideline (B-20 s.4.1); marginal breach but hard stop at this lender
+— Borrower 1 income: commission-based, variable — 2-year average used but current year YTD tracking 31% below prior year average; lender applying haircut per B-20 s.4.2
+— Subject property: condo, high-rise, postal code M5V (downtown Toronto) — building on lender restricted list due to investor concentration >40% in strata
+— Mortgage stress test: contract rate 5.44%, qualifying rate 7.44%; borrower qualifies at 7.21% only — $187/month shortfall
+— Down payment source: 8% gifted funds from non-immediate family member (uncle) — lender requires gift letter and 90-day donor bank history; neither provided
+— Borrower 2: student loan $340/month not disclosed on original application, flagged during bureau pull — increases TDS by 1.9%`
+    };
+
+    function loadDemo() {
+      document.getElementById('decisionType').value = DEMO.decision;
+      document.getElementById('lenderName').value = DEMO.lender;
+      document.getElementById('reasonInput').value = DEMO.reasons;
+    }
+
+    function setNodes(n) {
+      ['n1','n2','n3','n4'].forEach((id, i) => {
+        document.getElementById(id).className = 'node' + (i < n ? ' done' : '');
+      });
+    }
+
+    function showLoading(msg) {
+      document.getElementById('out').innerHTML = `<hr><div class="loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>${msg}</span></div>`;
+    }
+
+    function showError(msg) {
+      document.getElementById('out').innerHTML = `<div class="error">${msg}</div>`;
+      setNodes(0);
+    }
+
+    async function callClaude(apiKey, system, user) {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true"
+        },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 4000,
+          system,
+          messages: [{ role: "user", content: user }]
+        })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message);
+      if (!data.content || !data.content[0]) throw new Error("Empty response from API");
+      return data.content[0].text;
+    }
+
+    function safeJSON(text) {
+      let t = text.trim();
+      t = t.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/```\s*$/,'').trim();
+      try {
+        return JSON.parse(t);
+      } catch(e) {
+        const jsonStart = t.search(/[\[\{]/);
+        const jsonEnd = Math.max(t.lastIndexOf('}'), t.lastIndexOf(']'));
+        if (jsonStart !== -1 && jsonEnd !== -1) {
+          return JSON.parse(t.substring(jsonStart, jsonEnd + 1));
+        }
+        throw new Error("Could not parse response as JSON. Try again.");
+      }
+    }
+
+    async function runAnalysis() {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      if (!apiKey) return showError('Please enter your Anthropic API key. Get one free at console.anthropic.com');
+      const decision = document.getElementById('decisionType').value;
+      const lender = document.getElementById('lenderName').value || 'the lender';
+      const reasons = document.getElementById('reasonInput').value.trim();
+
+      if (!reasons) return showError('Please paste lender reason codes first.');
+
+      const btn = document.getElementById('runBtn');
+      btn.disabled = true;
+
+      try {
+        setNodes(1);
+        showLoading('Node 1 — parsing exception codes...');
+
+        const n1sys = `You are a Canadian mortgage underwriting expert. Parse raw lender exception codes into structured findings. Return ONLY valid JSON, no markdown:
+{"decision":"string","findings":[{"code":"short id","rule":"regulation referenced","issue":"plain English description","severity":"hard_stop|fixable|monitor"}],"summary":"2 sentence plain English summary"}`;
+
+        const n1 = safeJSON(await callClaude(apiKey, n1sys, `Decision: ${decision}\nLender: ${lender}\nNotes:\n${reasons}`));
+
+        setNodes(2);
+        showLoading('Node 2 — cross-referencing B-20 guidelines...');
+
+        const n2sys = `You are a Canadian mortgage compliance officer specializing in OSFI B-20. Given underwriting findings, provide compliance context and broker guidance. Return ONLY a valid JSON array, no markdown:
+[{"code":"same code","b20_context":"relevant B-20 section","plain_explanation":"1-2 sentences","broker_tip":"specific actionable step"}]`;
+
+        const n2 = safeJSON(await callClaude(apiKey, n2sys, JSON.stringify(n1.findings)));
+
+        setNodes(3);
+        showLoading('Node 3 — generating broker action plan...');
+
+        const n3sys = `You are a senior PM at a Canadian mortgage fintech. Produce a broker action plan from exception data. Return ONLY valid JSON, no markdown:
+{"resubmit_likelihood":"high|medium|low","estimated_days_to_resolve":number,"priority_actions":[{"rank":1,"action":"what to do","owner":"broker|borrower|lawyer|accountant","timeline":"e.g. 2-3 weeks"}],"alternative_lender_strategy":"1-2 sentences","kpi_impact":{"touchpoints_saved":number,"days_saved":number,"resubmit_rate_improvement":"e.g. +18%"}}`;
+
+        const n3 = safeJSON(await callClaude(apiKey, n3sys, JSON.stringify({ findings: n1, compliance: n2 })));
+
+        setNodes(4);
+        renderOutput(n1, n2, n3, lender, decision);
+        document.getElementById('ts').textContent = 'Analyzed ' + new Date().toLocaleTimeString();
+
+      } catch(e) {
+        showError('Error: ' + e.message);
+      }
+
+      btn.disabled = false;
+    }
+
+    function renderOutput(n1, n2, n3, lender, decision) {
+      const findings = (n1.findings || []).map(f => {
+        const m = n2.find(x => x.code === f.code) || {};
+        const sev = f.severity || 'monitor';
+        const cls = sev === 'hard_stop' ? 'dl' : sev === 'fixable' ? 'ok' : 'inf';
+        return `<div class="card ${cls}">
+          <div class="finding-head">
+            <div class="finding-code">${f.code}</div>
+            <div class="badge ${sev}">${sev.replace('_',' ')}</div>
+          </div>
+          <div class="finding-rule">${f.rule}</div>
+          <div class="finding-plain">${m.plain_explanation || f.issue}</div>
+          ${m.broker_tip ? `<div class="finding-tip">Broker tip: ${m.broker_tip}</div>` : ''}
+        </div>`;
+      }).join('');
+
+      const actions = (n3.priority_actions || []).map(a => `
+        <div class="arow">
+          <div class="anum">${a.rank}</div>
+          <div class="atext">${a.action} <span class="aowner">(${a.owner})</span></div>
+          <div class="atime">${a.timeline}</div>
+        </div>`).join('');
+
+      const lh = n3.resubmit_likelihood || 'medium';
+      const kpi = n3.kpi_impact || {};
+
+      document.getElementById('out').innerHTML = `
+        <hr>
+        <div class="meta">
+          <div>
+            <div class="meta-title">${lender} — ${decision.charAt(0).toUpperCase() + decision.slice(1)}</div>
+            <div class="meta-info">${(n1.findings||[]).length} findings · Analyzed ${new Date().toLocaleTimeString()}</div>
+          </div>
+        </div>
+        <div class="output">
+          <div>
+            <div class="section-label">Plain-language summary</div>
+            <div class="summary-card">${n1.summary}</div>
+          </div>
+          <div>
+            <div class="section-label">Exception findings — B-20 mapped</div>
+            ${findings}
+          </div>
+          <div>
+            <div class="section-label">Broker action plan</div>
+            <div class="action-card">
+              <div class="likelihood-row">
+                <span class="likelihood-lbl">Resubmission likelihood</span>
+                <span class="pill ${lh}">${lh}</span>
+              </div>
+              ${actions}
+              ${n3.alternative_lender_strategy ? `<div class="alt">Alternative: ${n3.alternative_lender_strategy}</div>` : ''}
+            </div>
+          </div>
+          <div>
+            <div class="section-label">KPI impact estimate</div>
+            <div class="kgrid">
+              <div class="kpi"><div class="kval">${kpi.touchpoints_saved ?? '—'}</div><div class="klbl">Touchpoints saved</div></div>
+              <div class="kpi"><div class="kval">${kpi.days_saved ?? '—'}</div><div class="klbl">Days saved</div></div>
+              <div class="kpi"><div class="kval">${kpi.resubmit_rate_improvement ?? '—'}</div><div class="klbl">Resubmit rate lift</div></div>
+            </div>
+          </div>
+        </div>`;
+    }
+  </script>
+</body>
+</html>
